@@ -76,6 +76,32 @@ You can add more tests in `tests/test_recommender.py`.
 
 Paste a sample of your recommender's output here as a text block so a reader can see what it produces:
 
+------------------------------------------------------------
+Loading songs from data/songs.csv...
+
+Top 5 recommendations for: genre=pop, mood=happy, energy=0.8
+========================================================
+1. Sunrise City                               99.9 / 100
+     - mood matches (happy)
+     - genre matches (pop)
+     - energy is close (0.82 vs 0.80)
+--------------------------------------------------------
+2. Rooftop Lights                             86.2 / 100
+     - mood matches (happy)
+     - genre is similar (indie pop ~ pop)
+     - energy is close (0.76 vs 0.80)
+--------------------------------------------------------
+3. Gym Hero                                   55.8 / 100
+     - genre matches (pop)
+--------------------------------------------------------
+4. Calle Sol                                  52.9 / 100
+     - mood is similar (energetic ~ happy)
+     - energy is close (0.84 vs 0.80)
+--------------------------------------------------------
+5. Neon Pulse Festival                        47.8 / 100
+     - mood is similar (euphoric ~ happy)
+--------------------------------------------------------
+------------------------------------------------------------
 ```
 # e.g.:
 # User profile: genre=indie, mood=chill, energy=low
