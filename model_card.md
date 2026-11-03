@@ -1,5 +1,7 @@
 # 🎧 Model Card: Music Recommender Simulation
 
+The Musice Recommender uses an algorithm to parse a csv file containing songs and features of the songs such as title, artist, genre, moode, energy, tempo_bpm, valence, danceability, and acousticness. This is parsed into a list of dictionaries and the algorithm processes each song to generate a score for it, comparing it to a given user's profile and preferences contained in the profile. Each song is given a score out of 100, weighing matches for genre and mood as heaviest. The recommender then can generate a list of songs based on the scores, a user can enter how many songs they would like recommended.
+
 ## 1. Model Name  
 
 Give your model a short, descriptive name.  

@@ -101,13 +101,7 @@ def category_sim(a: str, b: str, groups: List[set]) -> float:
 
 
 def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
-    """
-    Scores a single song against user preferences.
-    Required by recommend_songs() and src/main.py
-
-    Returns (score out of 100, reasons). Features missing from user_prefs are
-    skipped and the remaining weights are rescaled to sum to 100.
-    """
+    """Score one song from 0-100 against user_prefs and return (score, reasons)."""
     points: Dict[str, float] = {}
     reasons: List[str] = []
 
@@ -145,10 +139,7 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
     return score, reasons
 
 def recommend_songs(user_prefs: Dict, songs: List[Dict], k: int = 5) -> List[Tuple[Dict, float, str]]:
-    """
-    Functional implementation of the recommendation logic.
-    Required by src/main.py
-    """
+    """Score every song and return the top k as (song, score, explanation), best first."""
     scored = [
         (song, score, ", ".join(reasons) or "weak match on all features")
         for song in songs
