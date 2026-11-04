@@ -105,7 +105,12 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
     points: Dict[str, float] = {}
     reasons: List[str] = []
 
-    for feature, groups in (("mood", MOOD_GROUPS), ("genre", GENRE_GROUPS)):
+    # EXPERIMENT: mood check disabled to test ranking sensitivity. Restore the
+    # ("mood", MOOD_GROUPS) entry to re-enable.
+    for feature, groups in (
+        ("mood", MOOD_GROUPS),
+        ("genre", GENRE_GROUPS),
+    ):
         if feature not in user_prefs:
             continue
         sim = category_sim(user_prefs[feature], song[feature], groups)

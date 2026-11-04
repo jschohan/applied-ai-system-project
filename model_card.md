@@ -72,6 +72,8 @@ Prompts:
 - Cases where the system overfits to one preference  
 - Ways the scoring might unintentionally favor some users  
 
+One weakness is that mood dominates the score for a song recommendation. So if a user wants to prioritize a genre or other feature but includes a mood in their profile, then they may not get the results expected or desired. The system also overfits to mood + high energy. Specifically with a positive mood and high energy. The data also does not have enough variety to cater to a combination of negative mood + high energy or positive mood + low energy. Another weakness of the system is that similarity groups are hard-coded so they may not always cover mood of the songs processed, even if a similar or related mood/genre should have been matched and given some sort of points.
+
 ---
 
 ## 7. Evaluation  
@@ -86,6 +88,8 @@ Prompts:
 - Any simple tests or comparisons you ran  
 
 No need for numeric metrics unless you created some.
+
+
 
 ---
 

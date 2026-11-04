@@ -102,6 +102,230 @@ Top 5 recommendations for: genre=pop, mood=happy, energy=0.8
      - mood is similar (euphoric ~ happy)
 --------------------------------------------------------
 ------------------------------------------------------------
+
+# Adversarial Output Samples
+
+------------------------------------------------------------------
+[1 conflict: sad + high energy]
+Top 5 recommendations for: mood=sad, energy=0.9
+========================================================
+1. Night Drive Loop                           65.2 / 100
+     - mood is similar (moody ~ sad)
+--------------------------------------------------------
+2. Blue Monday Rain                           60.7 / 100
+     - mood matches (sad)
+--------------------------------------------------------
+3. Storm Runner                               45.4 / 100
+     - energy is close (0.91 vs 0.90)
+--------------------------------------------------------
+4. Gym Hero                                   45.1 / 100
+     - energy is close (0.93 vs 0.90)
+--------------------------------------------------------
+5. Neon Pulse Festival                        44.6 / 100
+     - energy is close (0.95 vs 0.90)
+--------------------------------------------------------
+
+[2 conflict: metal + peaceful + acoustic]
+Top 5 recommendations for: genre=metal, mood=peaceful, energy=0.95, acousticness=0.95
+========================================================
+1. Iron Cathedral                             53.9 / 100
+     - genre matches (metal)
+     - energy is close (0.97 vs 0.95)
+--------------------------------------------------------
+2. Moonlit Sonata                             47.1 / 100
+     - mood matches (peaceful)
+     - acousticness is close (0.97 vs 0.95)
+--------------------------------------------------------
+3. Storm Runner                               42.6 / 100
+     - genre is similar (rock ~ metal)
+     - energy is close (0.91 vs 0.95)
+--------------------------------------------------------
+4. Coffee Shop Stories                        30.7 / 100
+     - mood is similar (relaxed ~ peaceful)
+     - acousticness is close (0.89 vs 0.95)
+--------------------------------------------------------
+5. Gym Hero                                   30.5 / 100
+     - energy is close (0.93 vs 0.95)
+--------------------------------------------------------
+
+[3 unknown labels (angry / k-pop)]
+Top 5 recommendations for: mood=angry, genre=k-pop, energy=0.8
+========================================================
+1. Sunrise City                               33.2 / 100
+     - energy is close (0.82 vs 0.80)
+--------------------------------------------------------
+2. Calle Sol                                  32.9 / 100
+     - energy is close (0.84 vs 0.80)
+--------------------------------------------------------
+3. Rooftop Lights                             32.9 / 100
+     - energy is close (0.76 vs 0.80)
+--------------------------------------------------------
+4. Night Drive Loop                           32.7 / 100
+     - energy is close (0.75 vs 0.80)
+--------------------------------------------------------
+5. Concrete Poetry                            31.7 / 100
+     - energy is close (0.72 vs 0.80)
+--------------------------------------------------------
+
+[4 empty prefs]
+Top 5 recommendations for: (empty)
+========================================================
+1. Sunrise City                                0.0 / 100
+     - no matching preferences provided
+--------------------------------------------------------
+2. Midnight Coding                             0.0 / 100
+     - no matching preferences provided
+--------------------------------------------------------
+3. Storm Runner                                0.0 / 100
+     - no matching preferences provided
+--------------------------------------------------------
+4. Library Rain                                0.0 / 100
+     - no matching preferences provided
+--------------------------------------------------------
+5. Gym Hero                                    0.0 / 100
+     - no matching preferences provided
+--------------------------------------------------------
+
+[5 wrong case (Pop / Happy)]
+Top 5 recommendations for: genre=Pop, mood=Happy, energy=0.8
+========================================================
+1. Sunrise City                               33.2 / 100
+     - energy is close (0.82 vs 0.80)
+--------------------------------------------------------
+2. Calle Sol                                  32.9 / 100
+     - energy is close (0.84 vs 0.80)
+--------------------------------------------------------
+3. Rooftop Lights                             32.9 / 100
+     - energy is close (0.76 vs 0.80)
+--------------------------------------------------------
+4. Night Drive Loop                           32.7 / 100
+     - energy is close (0.75 vs 0.80)
+--------------------------------------------------------
+5. Concrete Poetry                            31.7 / 100
+     - energy is close (0.72 vs 0.80)
+--------------------------------------------------------
+
+[6 typo key (favorite_genre)]
+Top 5 recommendations for: favorite_genre=pop, energy=0.8
+========================================================
+1. Sunrise City                               99.7 / 100
+     - energy is close (0.82 vs 0.80)
+--------------------------------------------------------
+2. Calle Sol                                  98.7 / 100
+     - energy is close (0.84 vs 0.80)
+--------------------------------------------------------
+3. Rooftop Lights                             98.7 / 100
+     - energy is close (0.76 vs 0.80)
+--------------------------------------------------------
+4. Night Drive Loop                           98.0 / 100
+     - energy is close (0.75 vs 0.80)
+--------------------------------------------------------
+5. Concrete Poetry                            95.0 / 100
+     - energy is close (0.72 vs 0.80)
+--------------------------------------------------------
+
+[7 out-of-range energy (1.5)]
+Top 5 recommendations for: energy=1.5
+========================================================
+1. Iron Cathedral                             10.6 / 100
+     - weak match on all features
+--------------------------------------------------------
+2. Neon Pulse Festival                         8.9 / 100
+     - weak match on all features
+--------------------------------------------------------
+3. Gym Hero                                    7.4 / 100
+     - weak match on all features
+--------------------------------------------------------
+4. Storm Runner                                6.2 / 100
+     - weak match on all features
+--------------------------------------------------------
+5. Calle Sol                                   3.1 / 100
+     - weak match on all features
+--------------------------------------------------------
+
+[8 single feature (mood=chill)]
+Top 5 recommendations for: mood=chill
+========================================================
+1. Midnight Coding                           100.0 / 100
+     - mood matches (chill)
+--------------------------------------------------------
+2. Library Rain                              100.0 / 100
+     - mood matches (chill)
+--------------------------------------------------------
+3. Spacewalk Thoughts                        100.0 / 100
+     - mood matches (chill)
+--------------------------------------------------------
+4. Coffee Shop Stories                        50.0 / 100
+     - mood is similar (relaxed ~ chill)
+--------------------------------------------------------
+5. Focus Flow                                 50.0 / 100
+     - mood is similar (focused ~ chill)
+--------------------------------------------------------
+
+[9 ungrouped mood (romantic)]
+Top 5 recommendations for: mood=romantic, genre=r&b, energy=0.48
+========================================================
+1. Velvet Hours                              100.0 / 100
+     - mood matches (romantic)
+     - genre matches (r&b)
+     - energy is close (0.48 vs 0.48)
+--------------------------------------------------------
+2. Concrete Poetry                            34.4 / 100
+     - genre is similar (hip hop ~ r&b)
+--------------------------------------------------------
+3. Midnight Coding                            32.4 / 100
+     - energy is close (0.42 vs 0.48)
+--------------------------------------------------------
+4. Dusty Back Roads                           32.1 / 100
+     - energy is close (0.55 vs 0.48)
+--------------------------------------------------------
+5. Focus Flow                                 31.7 / 100
+     - energy is close (0.40 vs 0.48)
+--------------------------------------------------------
+
+[10 energy 0 + valence 0]
+Top 5 recommendations for: energy=0.0, valence=0.0
+========================================================
+1. Moonlit Sonata                             71.7 / 100
+     - weak match on all features
+--------------------------------------------------------
+2. Willow Creek Lullaby                       53.6 / 100
+     - weak match on all features
+--------------------------------------------------------
+3. Spacewalk Thoughts                         48.1 / 100
+     - weak match on all features
+--------------------------------------------------------
+4. Blue Monday Rain                           42.1 / 100
+     - weak match on all features
+--------------------------------------------------------
+5. Library Rain                               38.2 / 100
+     - weak match on all features
+--------------------------------------------------------
+
+[11 everything at 0.5]
+Top 5 recommendations for: energy=0.5, valence=0.5, danceability=0.5, acousticness=0.5
+========================================================
+1. Dusty Back Roads                           92.0 / 100
+     - energy is close (0.55 vs 0.50)
+     - danceability is close (0.60 vs 0.50)
+--------------------------------------------------------
+2. Midnight Coding                            90.9 / 100
+     - energy is close (0.42 vs 0.50)
+     - valence is close (0.56 vs 0.50)
+--------------------------------------------------------
+3. Velvet Hours                               90.6 / 100
+     - energy is close (0.48 vs 0.50)
+--------------------------------------------------------
+4. Focus Flow                                 87.8 / 100
+     - energy is close (0.40 vs 0.50)
+     - valence is close (0.59 vs 0.50)
+     - danceability is close (0.60 vs 0.50)
+--------------------------------------------------------
+5. Island Breeze                              86.3 / 100
+     - energy is close (0.58 vs 0.50)
+     - acousticness is close (0.45 vs 0.50)
+--------------------------------------------------------
+--------------------------------------------------------------------
 ```
 # e.g.:
 # User profile: genre=indie, mood=chill, energy=low
