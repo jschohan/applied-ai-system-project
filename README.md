@@ -101,3 +101,10 @@ Profile used: {'genre': 'r&b', 'mood': 'energetic', 'energy': 0.8, 'danceability
 Why: These songs fit your request because they match your desired energetic mood and feature close energy levels for you to jam out to. Additionally, they have high danceability and valence scores that align with your musical preferences.
 
 # Design Decisions
+One design decision I made was to exclude RAG since that would increase response time generation significantly. I also chose to keep the data set fixed and small for the songs to allow the AI to verify results faster. This means that there can still be responses or inputs that can fail to give a user desired results.
+
+# Testing Summary
+Based on the tests it seems like the Agent Loop is working well and system will iterate to see if a higher result score can be generated.
+
+# Reflection 
+I learned that using a general AI model to solve a problem could come at a cost of time. A trained model to perform a specific task would be much more desirable. Also, when building the system there needs to be fixed guardrails for when the agent fails, which could be for a multitude of reasons.
