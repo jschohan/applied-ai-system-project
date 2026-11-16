@@ -129,3 +129,22 @@ Prompts:
 - How this changed the way you think about music recommendation apps  
 
 I learned what types of values recommender systems look and a way to potentially score items to find the best match to a user's preferences. Something interesting I discovered is that it could be difficult to completely eliminate bias toward features. Having an unbiased recommender would mean inaccurate recommendations while a biased gives priority to some aspect of the data, making it more likely to appear or score higher. AI tools helped me create the algorithm and write a recipe for scoring and weighting. My biggest learning moment was seeing how to cover the related but not exact word matches for features, by creating a mapping and groups of synonomous terms. I needed to double-check the complicated arthimetic by running the data manually to see if the results would be as expected. What surprised me about a simple algorithm feeling like recommendations is that it doesn't require as much backend or complex code to figure out if a song fits a user's preferences. For example, a simple points assigning system (+-) for feature matches would give a fairly accurate score. If I were to extend this project I would try to parse a larger dataset to see how the recommender handles it.
+
+---
+
+## 10. AI Feature: Agentic Gemini Workflow
+
+**What it does.** `python src/main.py --query "..."` runs plan -> act -> check -> explain. Gemini (default `gemini-3.5-flash-lite`, free tier, override with `GEMINI_MODEL`) turns free text into a preference profile with genre/mood restricted to the catalog vocabulary. The deterministic scorer (`recommend_songs`) produces the ranking. A Gemini critic reviews the top 5 against the request and may adjust the profile (max 3 iterations, best-rated iteration kept). Gemini then writes a short rationale. The LLM never ranks songs itself.
+
+**Guardrails.** Every profile (LLM-made or hand-written) goes through `validate_profile` (lowercase, alias keys, clamp to [0,1], drop unknown labels and non-numeric values). Final results pass invariant checks (scores 0-100, descending, k items, no duplicates). Any API error, rate limit, timeout or bad JSON falls back to a keyword-based profile and the same scorer, with a visible warning. User text is passed inside `<request>` delimiters as data, and the output is schema-constrained.
+
+**Privacy.** Only the free-text music request and song metadata (title, genre, mood, audio features) are sent. Free-tier prompts may be used by Google, so nothing personal should be typed. The key comes from `GEMINI_API_KEY` or a git-ignored `.env`.
+
+**Measured reliability** (`python src/main.py --eval`, 9 queries, one run, so noisy): JSON parse success 89%, valid profile after validation 78%, critic changed the result 11%, top-1 matched expected genre/mood 4 of 4 (100%) on queries with expectations, fallback 11%, invariants 100%. The two non-valid runs were the empty query (no preferences, which is correct) and the prompt-injection query, where the model returned no usable JSON and the app fell back.
+
+**Limitations / biases.**
+- The critic can only re-weight the profile, not change the catalog. For "chill lofi, not too acoustic" every lofi/chill song in the 20-song catalog has acousticness 0.71-0.92, so the critic rated 2/5 three times and the loop kept iteration 1. The explanation did not warn the user about the mismatch.
+- LLM output varies run to run; the eval is a small sample, and expected-genre matching uses hand-picked acceptable sets.
+- Query text is truncated to 500 characters. The planner can only express the six scored features.
+- Free-tier quotas are low; the eval pauses between queries.
+

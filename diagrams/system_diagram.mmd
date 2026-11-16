@@ -1,0 +1,67 @@
+%% Music recommender agent: system diagram
+%% Render: https://mermaid.live or `mmdc -i diagrams/system_diagram.mmd -o diagrams/system_diagram.png`
+flowchart TD
+    %% ---------- INPUT ----------
+    subgraph INPUT["1. Input"]
+        U([User / CLI<br/>src/main.py])
+        Q["Free-text query<br/>--query"]
+        P["Fixed preference profiles<br/>default / --adversarial"]
+        D[("songs.csv<br/>data/")]
+    end
+
+    %% ---------- PROCESS ----------
+    subgraph AGENT["2. Agent loop (src/agent.py): plan -> act -> check -> explain"]
+        PLAN["Planner (LLM)<br/>query -> JSON profile"]
+        VAL["validate_profile<br/>clamp, alias, drop unknown"]
+        REC["Retriever / Scorer<br/>recommend_songs<br/>(deterministic, rule-based)"]
+        CRIT["Critic (LLM)<br/>rate 1-5, verdict ok/adjust"]
+        SEL["Keep best-rated iteration<br/>(max 3)"]
+        EXPL["Explainer (LLM)<br/>2-3 sentence rationale"]
+        FB["Rule-based fallback<br/>keyword_profile"]
+    end
+
+    LLM[/"Gemini API<br/>src/llm_client.py"/]
+
+    %% ---------- OUTPUT ----------
+    subgraph OUTPUT["3. Output"]
+        OUT["Top-k songs + scores + reasons<br/>+ explanation + warnings + trace"]
+    end
+
+    %% ---------- CHECKS ----------
+    subgraph CHECKS["Testing & human oversight"]
+        INV["check_invariants<br/>(k, sort order, score range)"]
+        EVAL["Evaluator<br/>src/evaluate.py --eval<br/>9 cases incl. injection, gibberish, empty"]
+        TESTS["pytest<br/>tests/test_recommender.py<br/>tests/test_agent.py (FakeLLM)"]
+        HUMAN{{"Human review<br/>reads trace, eval table,<br/>adversarial outputs; updates<br/>model_card.md & README"}}
+    end
+
+    %% ---------- DATA FLOW ----------
+    U --> Q
+    U --> P
+    D --> REC
+    D --> VAL
+    Q --> PLAN
+    P --> VAL
+    PLAN --> VAL
+    VAL --> REC
+    REC --> CRIT
+    CRIT -- "adjust" --> VAL
+    CRIT -- "ok / max iters" --> SEL
+    SEL --> EXPL
+    EXPL --> OUT
+
+    PLAN -. "LLM error / no key" .-> FB
+    FB --> REC
+
+    PLAN <--> LLM
+    CRIT <--> LLM
+    EXPL <--> LLM
+
+    %% ---------- WHERE AI OUTPUT IS CHECKED ----------
+    SEL --> INV
+    INV --> OUT
+    OUT --> EVAL
+    EVAL --> HUMAN
+    TESTS -. "exercises" .-> AGENT
+    TESTS -. "exercises" .-> REC
+    HUMAN -. "reviews & tunes" .-> AGENT

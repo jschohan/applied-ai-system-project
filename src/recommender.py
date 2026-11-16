@@ -47,12 +47,13 @@ class Recommender:
         # TODO: Implement explanation logic
         return "Explanation placeholder"
 
-def load_songs(csv_path: str) -> List[Dict]:
+def load_songs(csv_path: str, quiet: bool = False) -> List[Dict]:
     """
     Loads songs from a CSV file.
     Required by src/main.py
     """
-    print(f"Loading songs from {csv_path}...")
+    if not quiet:
+        print(f"Loading songs from {csv_path}...")
     songs: List[Dict] = []
     with open(csv_path, newline="", encoding="utf-8") as f:
         for row in csv.DictReader(f):
@@ -105,8 +106,6 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
     points: Dict[str, float] = {}
     reasons: List[str] = []
 
-    # EXPERIMENT: mood check disabled to test ranking sensitivity. Restore the
-    # ("mood", MOOD_GROUPS) entry to re-enable.
     for feature, groups in (
         ("mood", MOOD_GROUPS),
         ("genre", GENRE_GROUPS),
@@ -151,3 +150,86 @@ def recommend_songs(user_prefs: Dict, songs: List[Dict], k: int = 5) -> List[Tup
         for score, reasons in [score_song(user_prefs, song)]
     ]
     return sorted(scored, key=lambda item: item[1], reverse=True)[:k]
+
+
+# ---------------------------------------------------------------------------
+# Validation + invariants (used by the agent loop and the hand-written profiles)
+# ---------------------------------------------------------------------------
+
+KEY_ALIASES = {
+    "favorite_genre": "genre", "favourite_genre": "genre", "favorite_mood": "mood",
+    "target_energy": "energy", "target_valence": "valence",
+    "target_danceability": "danceability", "target_acousticness": "acousticness",
+}
+CATEGORICAL_KEYS = ("genre", "mood")
+NUMERIC_KEYS = ("energy", "acousticness", "valence", "danceability")
+
+
+def vocabulary(songs: List[Dict]) -> Dict[str, List[str]]:
+    """Genres and moods that actually occur in the catalog."""
+    return {key: sorted({s[key] for s in songs}) for key in CATEGORICAL_KEYS}
+
+
+def validate_profile(user_prefs: Dict, songs: List[Dict]) -> Tuple[Dict, List[str]]:
+    """Return (cleaned_prefs, warnings). Never raises on bad input.
+
+    Aliases keys, lowercases labels, clamps numerics to [0, 1], and drops
+    unknown keys, unknown labels and non-numeric values.
+    """
+    warnings: List[str] = []
+    clean: Dict = {}
+    vocab = vocabulary(songs)
+    if not isinstance(user_prefs, dict):
+        return {}, ["profile is not a dict; ignored"]
+
+    for raw_key, value in user_prefs.items():
+        key = KEY_ALIASES.get(str(raw_key).strip().lower(), str(raw_key).strip().lower())
+        if key != raw_key:
+            warnings.append(f"key '{raw_key}' -> '{key}'")
+        if value is None:
+            continue
+        if key in CATEGORICAL_KEYS:
+            label = str(value).strip().lower()
+            if label in vocab[key]:
+                clean[key] = label
+                if label != value:
+                    warnings.append(f"{key} '{value}' normalized to '{label}'")
+            else:
+                warnings.append(f"unknown {key} '{value}' dropped")
+        elif key in NUMERIC_KEYS:
+            if isinstance(value, bool):
+                warnings.append(f"non-numeric {key} {value!r} dropped")
+                continue
+            try:
+                num = float(value)
+            except (TypeError, ValueError):
+                warnings.append(f"non-numeric {key} {value!r} dropped")
+                continue
+            if math.isnan(num) or math.isinf(num):
+                warnings.append(f"non-finite {key} dropped")
+                continue
+            clamped = min(1.0, max(0.0, num))
+            if clamped != num:
+                warnings.append(f"{key} {num} clamped to {clamped}")
+            clean[key] = clamped
+        else:
+            warnings.append(f"unknown key '{raw_key}' dropped")
+    return clean, warnings
+
+
+def check_invariants(results: List[Tuple[Dict, float, str]], k: int,
+                     n_songs: Optional[int] = None) -> List[str]:
+    """Return a list of violated invariants (empty list = all good)."""
+    problems: List[str] = []
+    expected = k if n_songs is None else min(k, n_songs)
+    if len(results) != expected:
+        problems.append(f"expected {expected} items, got {len(results)}")
+    scores = [score for _, score, _ in results]
+    if any(not (0 <= sc <= 100) for sc in scores):
+        problems.append("score outside 0-100")
+    if scores != sorted(scores, reverse=True):
+        problems.append("not sorted descending")
+    ids = [song["id"] for song, _, _ in results]
+    if len(ids) != len(set(ids)):
+        problems.append("duplicate songs")
+    return problems
